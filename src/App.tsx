@@ -1,35 +1,59 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import Graph from "./Graph";
+import "./App.css";
 
-function App() {
-  const [count, setCount] = useState(0)
+const App = () => {
+  const data = [
+    {
+      twoPlusBelowGradeLevel: 5,
+      belowGradeLevel: 3,
+      onGradeLevel: 8,
+      aboveGradeLevel: 5,
+    },
+    {
+      twoPlusBelowGradeLevel: 4,
+      belowGradeLevel: 8,
+      onGradeLevel: 7,
+      aboveGradeLevel: 0,
+    },
+    {
+      twoPlusBelowGradeLevel: 5,
+      belowGradeLevel: 4,
+      onGradeLevel: 0,
+      aboveGradeLevel: 0,
+    },
+    {
+      twoPlusBelowGradeLevel: 7,
+      belowGradeLevel: 2,
+      onGradeLevel: 2,
+      aboveGradeLevel: 3,
+    },
+    {
+      twoPlusBelowGradeLevel: 1,
+      belowGradeLevel: 5,
+      onGradeLevel: 1,
+      aboveGradeLevel: 6,
+    },
+    {
+      twoPlusBelowGradeLevel: 0,
+      belowGradeLevel: 2,
+      onGradeLevel: 6,
+      aboveGradeLevel: 1,
+    },
+    {
+      twoPlusBelowGradeLevel: 2,
+      belowGradeLevel: 2.5,
+      onGradeLevel: 2.5,
+      aboveGradeLevel: 3,
+    },
+  ];
 
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+  return <div style={{
+    background: "#00000011",
+    margin: "100px 0",
+    maxWidth: "600px"
+  }}>
+    <Graph data={data} />
+  </div>;
+};
 
-export default App
+export default App;
