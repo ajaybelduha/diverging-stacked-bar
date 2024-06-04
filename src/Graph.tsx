@@ -208,7 +208,6 @@ const mapValueAndWidth = (data: DataProp[]) => {
   // Validate min width required
   newData = newData.map((item) => {
     const minValueRequired = Math.round((total * minWidthPercent) / 100);
-    console.log({ minValueRequired, total });
 
     const newTwoPlusBelowGradeLevel = getMinWidthValue(
       item.twoPlusBelowGradeLevel,
@@ -238,8 +237,6 @@ const mapValueAndWidth = (data: DataProp[]) => {
       aboveGradeLevel: newAboveGradeLevel,
     };
   });
-
-  console.log({ newData });
 
   return newData;
 };
