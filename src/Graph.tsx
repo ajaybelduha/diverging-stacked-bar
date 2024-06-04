@@ -54,7 +54,7 @@ const graphData: DataProp[] = [
 const spacing = 1;
 const vSpacing = 20;
 const barHeight = "25px";
-const minWidthPecent = 10;
+const minWidthPercent = 10;
 
 const bgColors = {
   twoPlusBelowGradeLevel: "#E46F72",
@@ -169,8 +169,25 @@ const GraphBlock = ({ data }: { data: DataProp }) => {
   );
 };
 
+const getMaxRanges = (gData: DataProp[]) => {
+  let maxBelowGrade = 0;
+  let maxAboveGrade = 0;
+  for (const key in gData) {
+    const maxBelow =
+      Number(gData[key].belowGradeLevel) +
+      Number(gData[key].twoPlusBelowGradeLevel);
+    const maxAbove =
+      Number(gData[key].onGradeLevel) + Number(gData[key].aboveGradeLevel);
+    if (maxBelow > maxBelowGrade) maxBelowGrade = maxBelow;
+
+    if (maxAbove > maxAboveGrade) maxAboveGrade = maxAbove;
+  }
+
+  return { maxBelowGrade, maxAboveGrade };
+};
+
 const mapValueAndWidth = (data: DataProp[]) => {
-  const newData = data.map((item) => {
+  let newData = data.map((item) => {
     return {
       ...item,
       twoPlusBelowGradeLevelValue: item.twoPlusBelowGradeLevel,
@@ -179,6 +196,29 @@ const mapValueAndWidth = (data: DataProp[]) => {
       aboveGradeLevelValue: item.aboveGradeLevel,
     };
   });
+
+  const { maxAboveGrade, maxBelowGrade } = getMaxRanges(newData);
+  const total = maxAboveGrade + maxBelowGrade;
+
+  // Validate min width required
+  newData = newData.map((item) => {
+
+    // Just increase values till min width required.
+
+    const newTwoPlusBelowGradeLevel = 0;
+    const newBelowGradeLevel = 0;
+    const newOnGradeLevel = 0;
+    const newAboveGradeLevel = 0;
+
+    return {
+      ...item,
+      twoPlusBelowGradeLevel: newTwoPlusBelowGradeLevel,
+      belowGradeLevel: newBelowGradeLevel,
+      onGradeLevel: newOnGradeLevel,
+      aboveGradeLevel: newAboveGradeLevel,
+    };
+  });
+
   return newData;
 };
 
@@ -186,25 +226,8 @@ const StackedBarHtml = ({ data }: Props) => {
   const [gData, setGData] = useState<DataProp[]>(mapValueAndWidth(graphData));
 
   useEffect(() => {
-    setGData(data as DataProp[]);
-  }, [data])
-
-  const getMaxRanges = (gData: DataProp[]) => {
-    let maxBelowGrade = 0;
-    let maxAboveGrade = 0;
-    for (const key in gData) {
-      const maxBelow =
-        Number(gData[key].belowGradeLevel) +
-        Number(gData[key].twoPlusBelowGradeLevel);
-      const maxAbove =
-        Number(gData[key].onGradeLevel) + Number(gData[key].aboveGradeLevel);
-      if (maxBelow > maxBelowGrade) maxBelowGrade = maxBelow;
-
-      if (maxAbove > maxAboveGrade) maxAboveGrade = maxAbove;
-    }
-
-    return { maxBelowGrade, maxAboveGrade };
-  };
+    setGData((data as DataProp[]));
+  }, [data]);
 
   const mapLeftAndRightBlankSpaceData = ({
     data,
@@ -222,11 +245,14 @@ const StackedBarHtml = ({ data }: Props) => {
         (Number(element.onGradeLevel) + Number(element.aboveGradeLevel));
 
       element.sum = maxAboveGrade + maxBelowGrade;
-    }    
+    }
     return newData;
   };
 
-  const { maxBelowGrade, maxAboveGrade } = useMemo(() => getMaxRanges(gData), [gData]);
+  const { maxBelowGrade, maxAboveGrade } = useMemo(
+    () => getMaxRanges(gData),
+    [gData]
+  );
 
   const updatedGraphData = mapLeftAndRightBlankSpaceData({
     data: gData,
@@ -242,7 +268,9 @@ const StackedBarHtml = ({ data }: Props) => {
           style={{
             position: "absolute",
             top: `-${vSpacing}px`,
-            left: `${(maxBelowGrade * 100) / (updatedGraphData[0].sum ?? 100)}%`,
+            left: `${
+              (maxBelowGrade * 100) / (updatedGraphData[0].sum ?? 100)
+            }%`,
             width: "1px",
             background: "#000",
             height: `calc(100% + 10px + ${vSpacing}px)`,
