@@ -1,10 +1,14 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 interface DataProp {
   twoPlusBelowGradeLevel: number;
+  twoPlusBelowGradeLevelValue?: number;
   belowGradeLevel: number;
+  belowGradeLevelValue?: number;
   onGradeLevel: number;
+  onGradeLevelValue?: number;
   aboveGradeLevel: number;
+  aboveGradeLevelValue?: number;
   blankBelowGrade?: number;
   blankAboveGrade?: number;
   sum?: number;
@@ -20,57 +24,57 @@ interface MapLeftAndRightBlankSpaceDataProp {
   maxAboveGrade: number;
 }
 
-const grapghData: DataProp[] = [
+const graphData: DataProp[] = [
   {
     twoPlusBelowGradeLevel: 5,
     belowGradeLevel: 10,
     onGradeLevel: 0,
-    aboveGradeLevel: 3
+    aboveGradeLevel: 3,
   },
   {
     twoPlusBelowGradeLevel: 0,
     belowGradeLevel: 8,
     onGradeLevel: 7,
-    aboveGradeLevel: 0
+    aboveGradeLevel: 0,
   },
   {
     twoPlusBelowGradeLevel: 5,
     belowGradeLevel: 4,
     onGradeLevel: 1,
-    aboveGradeLevel: 3
+    aboveGradeLevel: 3,
   },
   {
     twoPlusBelowGradeLevel: 7,
     belowGradeLevel: 2.5,
     onGradeLevel: 2,
-    aboveGradeLevel: 3
-  }
+    aboveGradeLevel: 3,
+  },
 ];
 
 const spacing = 1;
 const vSpacing = 20;
 const barHeight = "25px";
-const minWidthPecent = 5;
+const minWidthPecent = 10;
 
 const bgColors = {
   twoPlusBelowGradeLevel: "#E46F72",
   belowGradeLevel: "#F9C58E",
   onGradeLevel: "#C5F2E0",
-  aboveGradeLevel: "#2B6866"
+  aboveGradeLevel: "#2B6866",
 };
 
 const textColors = {
   twoPlusBelowGradeLevel: "#000000",
   belowGradeLevel: "#000000",
   onGradeLevel: "#000000",
-  aboveGradeLevel: "#ffffff"
+  aboveGradeLevel: "#ffffff",
 };
 
-const getClaculatedWith = (count: number, total: number) => {
+const getCalculatedWith = (count: number, total: number) => {
   return `calc(${(count * 100) / total}% - ${spacing}px)`;
 };
 
-const GrapgBlock = ({ data }: { data: DataProp }) => {
+const GraphBlock = ({ data }: { data: DataProp }) => {
   return (
     <div className="g-block" style={{ marginBottom: `${vSpacing}px` }}>
       {Number(data.blankBelowGrade) !== 0 && (
@@ -78,12 +82,12 @@ const GrapgBlock = ({ data }: { data: DataProp }) => {
           className="b blank-space"
           style={{
             marginLeft: `${spacing}px`,
-            width: getClaculatedWith(
+            width: getCalculatedWith(
               Number(data.blankBelowGrade),
               Number(data.sum)
             ),
             height: barHeight,
-            lineHeight: barHeight
+            lineHeight: barHeight,
           }}
         >
           {data.blankBelowGrade}
@@ -94,14 +98,14 @@ const GrapgBlock = ({ data }: { data: DataProp }) => {
           className="b"
           style={{
             marginLeft: `${spacing}px`,
-            width: getClaculatedWith(
+            width: getCalculatedWith(
               Number(data.twoPlusBelowGradeLevel),
               Number(data.sum)
             ),
             background: bgColors.twoPlusBelowGradeLevel,
             color: textColors.twoPlusBelowGradeLevel,
             height: barHeight,
-            lineHeight: barHeight
+            lineHeight: barHeight,
           }}
         >
           {data.twoPlusBelowGradeLevel}
@@ -112,14 +116,14 @@ const GrapgBlock = ({ data }: { data: DataProp }) => {
           className="b"
           style={{
             marginLeft: `${spacing}px`,
-            width: getClaculatedWith(
+            width: getCalculatedWith(
               Number(data.belowGradeLevel),
               Number(data.sum)
             ),
             background: bgColors.belowGradeLevel,
             color: textColors.belowGradeLevel,
             height: barHeight,
-            lineHeight: barHeight
+            lineHeight: barHeight,
           }}
         >
           {data.belowGradeLevel}
@@ -130,14 +134,14 @@ const GrapgBlock = ({ data }: { data: DataProp }) => {
           className="b"
           style={{
             marginLeft: `${spacing}px`,
-            width: getClaculatedWith(
+            width: getCalculatedWith(
               Number(data.onGradeLevel),
               Number(data.sum)
             ),
             background: bgColors.onGradeLevel,
             color: textColors.onGradeLevel,
             height: barHeight,
-            lineHeight: barHeight
+            lineHeight: barHeight,
           }}
         >
           {data.onGradeLevel}
@@ -148,14 +152,14 @@ const GrapgBlock = ({ data }: { data: DataProp }) => {
           className="b"
           style={{
             marginLeft: `${spacing}px`,
-            width: getClaculatedWith(
+            width: getCalculatedWith(
               Number(data.aboveGradeLevel),
               Number(data.sum)
             ),
             background: bgColors.aboveGradeLevel,
             color: textColors.aboveGradeLevel,
             height: barHeight,
-            lineHeight: barHeight
+            lineHeight: barHeight,
           }}
         >
           {data.aboveGradeLevel}
@@ -165,8 +169,25 @@ const GrapgBlock = ({ data }: { data: DataProp }) => {
   );
 };
 
+const mapValueAndWidth = (data: DataProp[]) => {
+  const newData = data.map((item) => {
+    return {
+      ...item,
+      twoPlusBelowGradeLevelValue: item.twoPlusBelowGradeLevel,
+      belowGradeLevelValue: item.belowGradeLevel,
+      onGradeLevelValue: item.onGradeLevel,
+      aboveGradeLevelValue: item.aboveGradeLevel,
+    };
+  });
+  return newData;
+};
+
 const StackedBarHtml = ({ data }: Props) => {
-  const [gData] = useState(data ?? grapghData);
+  const [gData, setGData] = useState<DataProp[]>(mapValueAndWidth(graphData));
+
+  useEffect(() => {
+    setGData(data as DataProp[]);
+  }, [data])
 
   const getMaxRanges = (gData: DataProp[]) => {
     let maxBelowGrade = 0;
@@ -181,15 +202,17 @@ const StackedBarHtml = ({ data }: Props) => {
 
       if (maxAbove > maxAboveGrade) maxAboveGrade = maxAbove;
     }
+
     return { maxBelowGrade, maxAboveGrade };
   };
 
   const mapLeftAndRightBlankSpaceData = ({
     data,
     maxAboveGrade,
-    maxBelowGrade
+    maxBelowGrade,
   }: MapLeftAndRightBlankSpaceDataProp) => {
-    for (const element of data) {
+    const newData = JSON.parse(JSON.stringify(data));
+    for (const element of newData) {
       element.blankBelowGrade =
         maxBelowGrade -
         (Number(element.twoPlusBelowGradeLevel) +
@@ -197,21 +220,19 @@ const StackedBarHtml = ({ data }: Props) => {
       element.blankAboveGrade =
         maxAboveGrade -
         (Number(element.onGradeLevel) + Number(element.aboveGradeLevel));
-      const e: any = element;
-      let sum = 0;
-      for (const v in element) {
-        sum = sum + e[v];
-      }
-      element.sum = sum;
-    }
+
+      element.sum = maxAboveGrade + maxBelowGrade;
+    }    
+    return newData;
   };
 
-  const { maxBelowGrade, maxAboveGrade } = getMaxRanges(gData);
+  const { maxBelowGrade, maxAboveGrade } = useMemo(() => getMaxRanges(gData), [gData]);
 
-  mapLeftAndRightBlankSpaceData({ data: gData, maxAboveGrade, maxBelowGrade });
-
-  console.log({gData});
-  
+  const updatedGraphData = mapLeftAndRightBlankSpaceData({
+    data: gData,
+    maxAboveGrade,
+    maxBelowGrade,
+  });
 
   return (
     <div className="graph-wrapper">
@@ -221,10 +242,10 @@ const StackedBarHtml = ({ data }: Props) => {
           style={{
             position: "absolute",
             top: `-${vSpacing}px`,
-            left: `${(maxBelowGrade * 100) / (gData[0].sum ?? 100)}%`,
+            left: `${(maxBelowGrade * 100) / (updatedGraphData[0].sum ?? 100)}%`,
             width: "1px",
             background: "#000",
-            height: `calc(100% + 10px + ${vSpacing}px)`
+            height: `calc(100% + 10px + ${vSpacing}px)`,
           }}
         ></div>
         <span
@@ -232,10 +253,10 @@ const StackedBarHtml = ({ data }: Props) => {
             position: "absolute",
             top: `-${vSpacing}px`,
             left: `calc((${
-              (maxBelowGrade * 100) / (gData[0].sum ?? 100)
+              (maxBelowGrade * 100) / (updatedGraphData[0].sum ?? 100)
             }%) + 20px)`,
             fontSize: "13px",
-            fontWeight: "bold"
+            fontWeight: "bold",
           }}
         >
           On & Above Grade
@@ -245,17 +266,17 @@ const StackedBarHtml = ({ data }: Props) => {
             position: "absolute",
             top: `-${vSpacing}px`,
             left: `calc((${
-              (maxBelowGrade * 100) / (gData[0].sum ?? 100)
+              (maxBelowGrade * 100) / (updatedGraphData[0].sum ?? 100)
             }%) - 100px)`,
             fontSize: "13px",
-            fontWeight: "bold"
+            fontWeight: "bold",
           }}
         >
           Below Grade
         </span>
         <div className="grapghs">
-          {gData.map((row: DataProp) => {
-            return <GrapgBlock data={row} key={JSON.stringify(row)} />;
+          {updatedGraphData.map((row: DataProp) => {
+            return <GraphBlock data={row} key={JSON.stringify(row)} />;
           })}
         </div>
       </div>
