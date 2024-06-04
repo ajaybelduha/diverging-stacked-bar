@@ -6,7 +6,7 @@ const App = () => {
     {
       twoPlusBelowGradeLevel: 5,
       belowGradeLevel: 3,
-      onGradeLevel: 8,
+      onGradeLevel: 6,
       aboveGradeLevel: 5,
     },
     {
